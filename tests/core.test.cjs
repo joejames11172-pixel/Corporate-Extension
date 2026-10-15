@@ -13,3 +13,12 @@ const handle=listeners.at(-1),sender={id:'own',frameId:0,url:'https://gemini.goo
 const invoke=(request,s=sender)=>new Promise(resolve=>handle({op:'corporate.bridge.rpc',request},s,resolve));
 const r={jsonrpc:'2.0',id:'j1',method:'tools/list'};assert.equal((await invoke(r)).ok,true);assert.equal((await invoke(r)).ok,true);assert.equal(calls,1);assert.equal((await invoke({...r,method:'ping'})).ok,false);assert.equal((await invoke({...r,id:'j2'},{...sender,url:'https://gemini.google.com/app/other'})).ok,false);assert.equal(calls,1);
 });
+test('unrelated chat DOM changes do not repeatedly restore and hide sidebar',async()=>{
+ let callback,writes=0,restores=0,listener;const sidebar={isConnected:true,contains:()=>false,closest:()=>null,querySelectorAll:()=>[],getAttribute:()=>null,removeAttribute:()=>{restores++},setAttribute:()=>{restores++},style:{setProperty:()=>{writes++}}};
+ const composer={getClientRects:()=>[{}]},conversation={};
+ const context=vm.createContext({corporateSite:()=>({id:'gemini'}),location:{href:'https://gemini.google.com/app/test',pathname:'/app/test'},document:{documentElement:{},querySelectorAll:s=>s.startsWith('textarea')?[composer]:s.startsWith('nav')?[sidebar]:[],querySelector:()=>conversation},getComputedStyle:()=>({visibility:'visible'}),MutationObserver:class{constructor(f){callback=f}disconnect(){}observe(){}},setTimeout:f=>{f();return 1},clearTimeout(){},window:{addEventListener(){}},chrome:{runtime:{id:'own',sendMessage:async()=>({enabled:true}),onMessage:{addListener:f=>listener=f}}}});
+ vm.runInContext(source('chat-only.js'),context);await new Promise(resolve=>setImmediate(resolve));assert.equal(writes,1);
+ for(let i=0;i<20;i++)callback([{type:'childList'}]);
+ assert.equal(writes,1,'sidebar stays hidden without repeated style writes');assert.equal(restores,0,'external DOM changes must not restore the sidebar');
+ listener({op:'corporate.mode',enabled:false},{id:'own'},()=>{});assert.equal(restores,1,'turning off restores the original style once');
+});
