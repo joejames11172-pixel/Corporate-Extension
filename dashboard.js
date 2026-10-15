@@ -1,26 +1,22 @@
-'use strict';
-const $=id=>document.getElementById(id);let tab;
-const status=t=>{$('status').textContent=t;};
-const message=async m=>{try{return await chrome.tabs.sendMessage(tab.id,m);}catch{return null;}};
-async function init(){
- [tab]=await chrome.tabs.query({active:true,currentWindow:true});const site=corporateSite(tab?.url);
- $('advanced').open=!site;$('chat').hidden=!site;$('launcher').hidden=!!site;$('site').textContent=site?site.name+' · active tab':'Choose a service';
- if(site){let r=await message({op:'corporate.status'});
-  if(!r){try{await chrome.scripting.executeScript({target:{tabId:tab.id},files:['sites.js','chat-only.js']});r=await message({op:'corporate.status'});}catch{}}
-  if(r){$('mode').checked=r.enabled;status(r.enabled?'On':'Off');}
-  else{$('mode').disabled=true;status('Reload this tab once after installing the extension.');}
- }
- for(const s of CorporateSites){const b=document.createElement('button');b.textContent=s.name;b.onclick=async()=>{await chrome.tabs.update(tab.id,{url:s.url});window.close();};$('sites').append(b);}
- const bridgeKey='corporate-bridge:'+tab.id;const saved=await chrome.storage.session.get(['session',bridgeKey]);const {session}=saved;const grant=saved[bridgeKey];$('jsonBridge').checked=!!(grant&&new URL(tab.url).origin===grant.origin&&new URL(tab.url).pathname===grant.path);$('jsonBridge').disabled=site?.id!=='gemini';$('pairState').textContent=session&&session.expires>Date.now()?'Browser bridge paired (session active).':'Browser bridge not paired in this extension.';
-}
-$('mode').onchange=async()=>{const r=await message({op:'corporate.mode',enabled:$('mode').checked});status(r?.ok?'Display preference updated.':'Unable to update this page.');};
-$('full').onclick=async()=>{await message({op:'corporate.mode',enabled:false});$('mode').checked=false;status('Full page restored.');};
-$('settings').onclick=async()=>{const r=await message({op:'corporate.settings'});$('mode').checked=false;status(r?.ok?'Native settings opened.':r?.reason||'Open the site’s settings from the full page.');};
-$('key').onclick=()=>{const open=$('passwordPanel').hidden;$('passwordPanel').hidden=!open;$('key').setAttribute('aria-expanded',String(open));};
-$('generate').onclick=()=>{try{$('password').value=makeCorporatePassword(Number($('length').value),$('symbols').checked);$('copy').disabled=false;status('Password generated locally.');}catch(e){status(e.message);}};
-$('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('password').value);status('Copied.');}catch{status('Select the generated password and copy it manually.');}};
-$('reveal').onclick=()=>{const show=$('password').type==='password';$('password').type=show?'text':'password';$('reveal').textContent=show?'Hide':'Show';};
-$('pair').onclick=()=>chrome.tabs.create({url:chrome.runtime.getURL('popup.html')});
-init().catch(()=>status('This browser page cannot be inspected. Open a normal website first.'));
 
-$('jsonBridge').onchange=async()=>{const enabled=$('jsonBridge').checked;const r=await chrome.runtime.sendMessage({op:'corporate.bridge.enable',tabId:tab.id,enabled});if(!r?.ok){$('jsonBridge').checked=false;status(r?.error||'Unable to enable');return;}try{await chrome.scripting.executeScript({target:{tabId:tab.id},files:['chat-protocol.js','chat-bridge.js']});await message({op:'corporate.bridge.activate',enabled});status(enabled?'JSON tools enabled for this Gemini chat.':'JSON tools disabled.');}catch{status('Reload the Gemini page and enable again.');}};
+'use strict';
+const $=id=>document.getElementById(id);let tab,enabled=false;
+async function state(){
+ const r=await chrome.runtime.sendMessage({op:'corporate.connection.status',tabId:tab.id});
+ enabled=r?.enabled===true;$('power').textContent=enabled?'On — turn off':'Off — turn on';
+ $('power').setAttribute('aria-pressed',String(enabled));
+ $('status').textContent=!r?.paired?'Setup needed: open Settings and pair Corporate Helper.':!r.reachable?'Disconnected: helper could not be reached. The Windows SSH supervisor is not installed by this extension.':enabled?'Connected — JSON tools and chat-only mode are on.':'Helper reachable — this chat is off.';
+}
+$('settings').onclick=()=>chrome.tabs.create({url:chrome.runtime.getURL('settings.html')+'?tab='+tab.id});
+$('power').onclick=async()=>{
+ $('power').disabled=true;
+ try{
+  const next=!enabled,r=await chrome.runtime.sendMessage({op:'corporate.bridge.enable',tabId:tab.id,enabled:next});
+  if(!r?.ok)throw Error(r?.error||'Unable to change connection');
+  await chrome.scripting.executeScript({target:{tabId:tab.id},files:['sites.js','chat-only.js','chat-protocol.js','chat-bridge.js']});
+  await chrome.tabs.sendMessage(tab.id,{op:'corporate.mode',enabled:next});
+  await chrome.tabs.sendMessage(tab.id,{op:'corporate.bridge.activate',enabled:next});
+  await state();
+ }catch(e){$('status').textContent=e.message;}finally{$('power').disabled=false;}
+};
+(async()=>{[tab]=await chrome.tabs.query({active:true,currentWindow:true});const s=corporateSite(tab?.url);$('site').textContent=s?s.name:'Choose an AI service in Settings';if(s?.id!=='gemini'){$('status').textContent='JSON chat tools currently support Gemini. Open Settings for other services.';return;}await state();$('power').disabled=false;})().catch(()=>{$('status').textContent='Unable to inspect this tab.';});
