@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Corporate Extension</title><link rel="stylesheet" href="dashboard.css">
+<body><header><strong>Corporate Extension</strong><span>0.3.2 · preview</span></header>
+<main><p id="site">Loading active tab…</p><section id="chat" hidden>
+<label class="row"><span>Chat-only mode</span><input id="mode" type="checkbox" role="switch"></label>
+</section><details id="advanced"><summary>⚙ Settings</summary><section>
+<div class="buttons"><button id="full">Show full page</button><button id="settings" title="Open this AI’s settings" aria-label="AI settings">⚙ Settings</button></div>
+</section><section id="launcher" hidden><h2>Open an AI chat</h2><div id="sites"></div><p class="hint">Opens in this tab.</p></section>
+<section><button id="key" aria-expanded="false">🔑 Password generator</button><div id="passwordPanel" hidden>
+<label>Length <input id="length" type="number" min="12" max="128" value="24"></label>
+<label><input id="symbols" type="checkbox" checked> Include symbols</label>
+<input id="password" type="password" readonly aria-label="Generated password" autocomplete="off">
+<div class="buttons"><button id="generate">Generate</button><button id="copy" disabled>Copy</button><button id="reveal">Show</button></div>
+<p class="hint">Generated locally; never saved or sent to a page. Your clipboard retains copied text.</p></div></section>
+<section><h2>Corporate Helper</h2><p id="pairState"></p><label class="row"><span>Enable JSON tools in this Gemini chat</span><input id="jsonBridge" type="checkbox"></label><p class="hint">Allows read-only helper commands in new assistant JSON blocks and submits their results to this chat. Pair first. Changing chats requires enabling again.</p><button id="pair">Pair / disconnect browser bridge</button>
+<p class="hint">Automatic SSH tunnels require the Windows helper, which is not installed by this extension. Screen capture and chat image delivery are pending.</p></section>
+</details><p id="status" role="status" aria-live="polite"></p></main>
+<script src="sites.js"></script><script src="password.js"></script><script src="settings.js"></script></body></html>
