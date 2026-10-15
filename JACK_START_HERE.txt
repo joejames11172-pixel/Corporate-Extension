@@ -1,4 +1,4 @@
-CORPORATE HELPER — GEMINI CHAT JSON BRIDGE 0.3.1
+CORPORATE HELPER — GEMINI CHAT JSON BRIDGE 0.3.2
 
 Status: implementation and automated core tests complete. Live Supermium/Gemini interaction still requires verification. Alpine HTTPS health reports version 0.2.0; deployed browser endpoint is available. This browser adapter currently supports Gemini only; other listed AI sites retain launcher/chat-only features.
 
@@ -39,3 +39,5 @@ Transport: authenticated HTTPS POST /browser/mcp, HMAC over path, increasing cou
 Documentation is maintained in Channels / Corporate Helper. Update it whenever behavior, configuration, deployment or verification changes.
 
 Upgrade from 0.3.0: replace the extracted extension files, reload Corporate Extension in chrome://extensions, then reload the Gemini tab once. This is required to remove the old sidebar observer. Pair again if the session has been cleared.
+
+0.3.2 DAILY USE: Open Jack's Gemini conversation. Click Corporate Extension. Click On. Connected means the authenticated helper answered and this chat is enabled; Disconnected means the helper could not be reached; Setup needed means pairing is absent or expired. Settings opens a separate configuration tab tied to the originating Gemini tab. For initial setup choose Settings → Pair / disconnect browser bridge → enter the existing HTTPS address, identity and password → Pair securely → return to Gemini → extension → On. The old independent JSON switch is no longer needed for daily use. Keep the existing PuTTY tunnel open: automatic Windows SSH supervision remains unimplemented.
