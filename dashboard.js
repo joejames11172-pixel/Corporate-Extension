@@ -5,7 +5,7 @@ async function state(){
  const r=await chrome.runtime.sendMessage({op:'corporate.connection.status',tabId:tab.id});
  enabled=r?.enabled===true;$('power').textContent=enabled?'On — turn off':'Off — turn on';
  $('power').setAttribute('aria-pressed',String(enabled));
- $('status').textContent=!r?.paired?'Setup needed: open Settings and pair Corporate Helper.':!r.reachable?'Disconnected: helper could not be reached. The Windows SSH supervisor is not installed by this extension.':enabled?'Connected — JSON tools and chat-only mode are on.':'Helper reachable — this chat is off.';
+ $('status').textContent=!r?.paired?'Install Corporate Helper once on this computer.':!r.reachable?'Waiting for the master helper. Automatic discovery is running.':enabled?'Connected — JSON tools and chat-only mode are on.':'Helper reachable — this chat is off.';
 }
 $('settings').onclick=()=>chrome.tabs.create({url:chrome.runtime.getURL('settings.html')+'?tab='+tab.id});
 $('power').onclick=async()=>{

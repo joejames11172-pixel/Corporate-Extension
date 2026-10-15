@@ -25,6 +25,6 @@ await page.waitForFunction(()=>document.querySelectorAll('#sites button').length
 assert(await page.locator('#launcher').isVisible());
 await page.getByRole('button',{name:'Gemini',exact:true}).click();
 assert.deepEqual(await page.evaluate(()=>updates),[{id:7,url:'https://gemini.google.com/'}]);
-await page.locator('#key').click();await page.locator('#generate').click();assert.equal((await page.locator('#password').inputValue()).length,24);
+await page.locator('#generate').click();assert.equal((await page.locator('#password').inputValue()).length,24);
 console.log('PASS: chat DOM preservation/restore; settings fallback; host boundaries; 100 password samples; invalid lengths; 11 launchers; current-tab navigation; popup generation');
 }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

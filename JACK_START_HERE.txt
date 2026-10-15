@@ -1,43 +1,32 @@
-CORPORATE HELPER — GEMINI CHAT JSON BRIDGE 0.3.2
+CORPORATE EXTENSION 0.4.0 — AUTOMATIC HELPER CONNECTION
 
-Status: implementation and automated core tests complete. Live Supermium/Gemini interaction still requires verification. Alpine HTTPS health reports version 0.2.0; deployed browser endpoint is available. This browser adapter currently supports Gemini only; other listed AI sites retain launcher/chat-only features.
+Install the personalized Corporate Helper Windows package once using Install.cmd as administrator. Load its included Corporate Extension folder once through Supermium chrome://extensions → Developer mode → Load unpacked. The main popup has On/Off and Settings. There are no address, identity or password fields and no hourly pairing.
 
-Joe: extract the extension ZIP to a permanent folder. In Supermium open chrome://extensions, enable Developer mode, then Load unpacked (or reload the existing Corporate Extension) and select that folder. Reload the Gemini conversation. Open the extension toolbar popup, choose Pair / disconnect browser bridge, and pair using the existing enrollment and HTTPS endpoint. Return to Jack's Gemini conversation, open the popup, expand Settings, and enable JSON tools in this Gemini chat. This permits read-only tool requests and submitting results back into that chat. Do not enable the old diagnostic extension as well.
+Corporate Helper starts at Windows boot. It listens for master discovery on the local subnet. Only the master opens the authenticated TLS helper channel. Non-master helpers never connect to each other. The extension talks to its local helper through native messaging. Native enrollment and Windows/Supermium integration remain to be verified on the actual machine.
 
-Jack: output a single fenced JSON code block containing exactly this envelope. Use a fresh string ID for every new request. Do not repeat a previously used ID with different content.
+Leave it On. Opening Jack's active Gemini conversation automatically grants that active chat access to the read-only tool bridge. Connected means the local helper recently received an authenticated master exchange. Waiting for master means automatic discovery/reconnection is pending. A missing native helper means installation did not complete; repeated pairing is not a remedy.
+
+Jack: output one fenced JSON block with this exact envelope and a fresh string ID:
 
 {"corporate_helper":{"jsonrpc":"2.0","id":"jack-discover-1","method":"tools/list","params":{}}}
 
-The extension recognizes only new model-response code blocks after activation, waits for the response to settle, authenticates the request to Corporate Helper, and submits corporate_helper_result JSON into the same chat when the native empty composer and Send control are available. If it cannot submit, the result panel provides an Insert result into chat button and selectable text. Existing drafts are preserved. A result printed in the chat is data, not another request.
-
-Ask for complete instructions:
-
+Help:
 {"corporate_helper":{"jsonrpc":"2.0","id":"jack-help-1","method":"tools/call","params":{"name":"helper_help","arguments":{}}}}
 
-Check the helper:
-
+Status:
 {"corporate_helper":{"jsonrpc":"2.0","id":"jack-status-1","method":"tools/call","params":{"name":"helper_status","arguments":{}}}}
 
-Find the enabled tab IDs:
-
+Enabled tabs:
 {"corporate_helper":{"jsonrpc":"2.0","id":"jack-tabs-1","method":"tools/call","params":{"name":"browser_status","arguments":{}}}}
 
-Use the actual returned tabId (9 below is an example):
-
+Capture: replace 9 with an actual returned tab ID.
 {"corporate_helper":{"jsonrpc":"2.0","id":"jack-capture-1","method":"tools/call","params":{"name":"browser_request_snapshot","arguments":{"tabId":9}}}}
 
-The response returns a capture ID. Substitute it below, then request the result. If ready:false, wait and issue a fresh RPC ID to check again. Capture results expire after 60 seconds. Unknown/expired means request a new capture.
-
+Read capture: replace the example id with the returned capture ID. Use a fresh RPC string ID when checking again.
 {"corporate_helper":{"jsonrpc":"2.0","id":"jack-read-1","method":"tools/call","params":{"name":"browser_snapshot_result","arguments":{"id":"0123456789abcdef0123456789abcdef"}}}}
 
-This is a redacted page-text snapshot, capped at 12,000 characters from the start of the visible page. It is not a screenshot or complete transcript and cannot guarantee access to the latest message on a long page. No shell, Drive writes, SMS, clicks, keyboard control or other sessions are exposed. Authentication binds a paired browser session; it does not independently prove a persistent worker GUID or that the model is Jack. Worker identity enrollment remains separate work.
+The extension submits corporate_helper_result JSON when the native empty composer and Send control can be identified. It leaves a selectable result/insertion fallback if it cannot submit. Existing drafts are preserved. Native Gemini UI submission is not yet verified. Ordinary JSON, quoted user blocks, and previous assistant blocks at activation are not executed.
 
-Changing conversation paths disables access until re-enabled. Pairing expires after one hour and is not stored across browser restarts. Cached request IDs prevent repeat execution during the session; uncertain outcomes are not automatically retried. Disconnecting clears the extension's session data. Requests are read-only; even text capture is restricted to tabs explicitly enabled in the paired session.
+Captures are redacted text, capped at 12,000 characters from the start of the visible page; they are not screen images or a guaranteed complete/latest transcript. Results expire after 60 seconds. There is no shell, Drive write, click/type control, or access to other helpers' captures. Enrollment identifies a device; persistent worker GUID enrollment is separate work. Existing SSH tunnels are preserved; this automatic helper channel is master-initiated TLS.
 
-Transport: authenticated HTTPS POST /browser/mcp, HMAC over path, increasing counter and exact JSON body, using the existing SRP enrollment. The browser adapter relays individual JSON-RPC requests through this bridge; it is not a general-purpose native MCP client. The helper's existing operator /mcp interface remains separate and its operator token is never placed in the extension.
-
-Documentation is maintained in Channels / Corporate Helper. Update it whenever behavior, configuration, deployment or verification changes.
-
-Upgrade from 0.3.0: replace the extracted extension files, reload Corporate Extension in chrome://extensions, then reload the Gemini tab once. This is required to remove the old sidebar observer. Pair again if the session has been cleared.
-
-0.3.2 DAILY USE: Open Jack's Gemini conversation. Click Corporate Extension. Click On. Connected means the authenticated helper answered and this chat is enabled; Disconnected means the helper could not be reached; Setup needed means pairing is absent or expired. Settings opens a separate configuration tab tied to the originating Gemini tab. For initial setup choose Settings → Pair / disconnect browser bridge → enter the existing HTTPS address, identity and password → Pair securely → return to Gemini → extension → On. The old independent JSON switch is no longer needed for daily use. Keep the existing PuTTY tunnel open: automatic Windows SSH supervision remains unimplemented.
+Keep the personalized installer archive private and use a distinct enrollment for each machine.

@@ -1,18 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Corporate Extension",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "minimum_chrome_version": "116",
-  "description": "AI chat launcher, conservative chat-only mode, local password generator and authenticated browser pairing.",
+  "description": "Automatic local Corporate Helper connection, chat-only layout, settings and password generator.",
   "permissions": [
     "activeTab",
     "scripting",
     "storage",
     "alarms",
-    "clipboardWrite"
-  ],
-  "optional_host_permissions": [
-    "https://*/*"
+    "clipboardWrite",
+    "nativeMessaging"
   ],
   "background": {
     "service_worker": "background.js"
@@ -51,5 +49,6 @@
       ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2WMSX3Ucd8Vbotxp9uVptdCwxf3Xi4Wy+R0kn+dUJtqMD/hA2ZOOh9EhDDLH0u7XMgzL2cm6Wtq8PviDwTAeBHMnqxrsEwKbZW1c9fG2eVNFDoHX+QN2lAHKXM24EhpqWQcmr6jdIVXav63OPE5NuiZtFyAQ9UwKelf4oQvX9osFQ1YhGuZF78jrwDf9ISHGdFHqvNJA6uofOKVY01r9mROTTLwPJteRDLEO5FKfXnuVtLQ+13TrNJOxO4G/E9qe7GdaH3qxFWvi70vRzfShJq9nqgnitXE+QecptGdeac1jMa+2Jjx0v+ImNL5lMxKWrJz9ZIXUcCq6YHWfMRPpiwIDAQAB"
 }
