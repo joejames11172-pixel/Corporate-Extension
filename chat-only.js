@@ -2,14 +2,17 @@
  'use strict';
  if(globalThis.__corporateChatOnly)return;globalThis.__corporateChatOnly=true;
  const site=corporateSite(location.href);if(!site)return;
- let enabled=true,timer,observed;
+ let enabled=true,timer;
  const hidden=new Map();
  const composerSelector='textarea,[contenteditable="true"][role="textbox"],[contenteditable="true"].ql-editor,[contenteditable="true"][data-placeholder]';
  const panelSelector='nav,aside,[role="navigation"],bard-sidenav,[data-testid="sidebar"],[data-test-id="side-nav"],.sidenav-container';
  const visible=e=>!!(e.getClientRects().length)&&getComputedStyle(e).visibility!=='hidden';
  const restore=()=>{for(const [e,style] of hidden){if(style===null)e.removeAttribute('style');else e.setAttribute('style',style);}hidden.clear();};
  function update(){
-  observer.disconnect();restore();
+  observer.disconnect();
+  // Reconcile incrementally: restoring every panel on every DOM mutation
+  // makes Gemini rebuild its sidebar and triggers another observer pass.
+  for(const e of hidden.keys())if(!e.isConnected)hidden.delete(e);
   if(enabled&&!/\/(?:login|signin|sign-in|auth|settings|account)(?:\/|$)/i.test(location.pathname)){
    const composer=[...document.querySelectorAll(composerSelector)].find(visible);
    const conversation=document.querySelector('main,[role="main"],chat-window');
@@ -18,10 +21,11 @@
      if(e.contains(composer)||e.contains(conversation)||e.closest('[role="dialog"]'))continue;
      // Never hide a whole panel that owns a native control the user asked to retain.
      if([...e.querySelectorAll('button,a,input')].some(x=>/new chat|settings|upload|attach|microphone|voice|sign in/i.test((x.getAttribute('aria-label')||'')+' '+(x.textContent||''))))continue;
-     hidden.set(e,e.getAttribute('style'));e.style.setProperty('display','none','important');
+     if(!hidden.has(e)){hidden.set(e,e.getAttribute('style'));e.style.setProperty('display','none','important');}
     }
    }
   }
+  if(!enabled||/\/(?:login|signin|sign-in|auth|settings|account)(?:\/|$)/i.test(location.pathname))restore();
   observer.observe(document.documentElement,{childList:true,subtree:true});
  }
  const observer=new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(update,200);});
