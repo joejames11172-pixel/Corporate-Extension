@@ -17,10 +17,10 @@ assert(await page.locator('#hide').isVisible());
 assert.equal(await page.evaluate(()=>corporateSite('https://gemini.google.com.attacker.invalid/')),undefined);
 await page.evaluate(()=>{for(let i=0;i<100;i++){const p=makeCorporatePassword(24,true);if(p.length!==24||!/[A-Z]/.test(p)||!/[a-z]/.test(p)||!/[2-9]/.test(p)||!/[!@#$%*_=+?\-]/.test(p))throw Error('Password constraints');}for(const n of [0,11,129,12.5]){let rejected=false;try{makeCorporatePassword(n)}catch{rejected=true}if(!rejected)throw Error('Invalid length accepted')}});
 // Dashboard runs as a fixture with only the Chrome API messages mocked.
-await page.route('https://fixture.invalid/**',r=>r.fulfill({contentType:'text/html',body:fs.readFileSync(root+'/dashboard.html','utf8').replace(/<script[^>]*><\/script>/g,'')}));
+await page.route('https://fixture.invalid/**',r=>r.fulfill({contentType:'text/html',body:fs.readFileSync(root+'/settings.html','utf8').replace(/<script[^>]*><\/script>/g,'')}));
 await page.goto('https://fixture.invalid/');
 await page.evaluate(()=>{window.updates=[];window.chrome={tabs:{query:async()=>[{id:7,url:'https://example.com/'}],update:async(id,v)=>updates.push({id,...v}),create:async()=>{}},storage:{session:{get:async()=>({})}},runtime:{getURL:p=>'chrome-extension://test/'+p}};window.close=()=>{};});
-for(const name of ['sites.js','password.js','dashboard.js'])await page.addScriptTag({content:fs.readFileSync(root+'/'+name,'utf8')});
+for(const name of ['sites.js','password.js','settings.js'])await page.addScriptTag({content:fs.readFileSync(root+'/'+name,'utf8')});
 await page.waitForFunction(()=>document.querySelectorAll('#sites button').length===11);
 assert(await page.locator('#launcher').isVisible());
 await page.getByRole('button',{name:'Gemini',exact:true}).click();
