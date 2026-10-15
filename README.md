@@ -1,4 +1,4 @@
-# Corporate Extension 0.3.1 preview
+# Corporate Extension 0.3.2 preview
 
 Corporate Helper's Chromium/Supermium browser component. This is an installable development preview, not a verified live-site production release.
 
@@ -23,3 +23,5 @@ Documentation maintenance: update Channels / Corporate Helper documentation with
 Deployment verification 2026-10-15: Alpine live HTTPS health reports Corporate Helper 0.2.0. All 16 installed helper tests pass, including actual verified HTTPS/SRP/browser JSON integration. Six extension Node tests pass (three helper registry tests are also part of the combined eight-test local run). Native Gemini/Supermium UI remains unverified.
 
 0.3.1 correction: the chat-only layout no longer restores/hides panels on every page mutation; existing hidden panels remain untouched until switched off. A regression test simulates 20 repeated chat DOM changes and verifies no sidebar style churn, then verifies restoration on off. The chat popup shows its on/off switch; password, pairing, JSON permissions and native settings are inside a collapsed Settings section. After updating/reloading the extension, reload Gemini once to unload the old observer. Six extension tests pass; native Supermium validation remains with the installed browser.
+
+0.3.2 correction: the main popup has exactly On/Off and Settings buttons. On/Off controls both chat-only display and Gemini JSON access. An authenticated ping distinguishes reachable helper from an expired/unpaired or disconnected connection. Settings opens separately and retains the originating Gemini tab ID. Seven extension tests pass. No Windows tunnel supervisor has been built/installed: keep the existing PuTTY tunnel open. Browser polling is not SSH supervision.
