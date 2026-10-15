@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Corporate Extension",
+  "version": "0.3.0",
+  "minimum_chrome_version": "116",
+  "description": "AI chat launcher, conservative chat-only mode, local password generator and authenticated browser pairing.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "alarms",
+    "clipboardWrite"
+  ],
+  "optional_host_permissions": [
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "dashboard.html",
+    "default_title": "Corporate Extension"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://gemini.google.com/*",
+        "https://claude.ai/*",
+        "https://copilot.microsoft.com/*",
+        "https://copilot.com/*",
+        "https://grok.com/*",
+        "https://perplexity.ai/*",
+        "https://www.perplexity.ai/*",
+        "https://chat.deepseek.com/*",
+        "https://chat.qwen.ai/*",
+        "https://meta.ai/*",
+        "https://www.meta.ai/*",
+        "https://chat.mistral.ai/*",
+        "https://poe.com/*"
+      ],
+      "js": [
+        "sites.js",
+        "chat-only.js",
+        "chat-protocol.js",
+        "chat-bridge.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
