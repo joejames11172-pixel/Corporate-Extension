@@ -1,0 +1,30 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const root=require('node:path').resolve(__dirname,'..');
+(async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});try{
+const page=await browser.newPage();
+await page.route('https://gemini.google.com/**',r=>r.fulfill({contentType:'text/html',body:'<nav id="hide">History</nav><aside id="keep"><button>New chat</button><button>Attach</button></aside><main><p>Answer</p><textarea aria-label="Message"></textarea><button>Send</button></main>'}));
+await page.goto('https://gemini.google.com/app/test');
+await page.evaluate(()=>{window.listeners=[];window.chrome={runtime:{id:'test',sendMessage:async()=>({enabled:true}),onMessage:{addListener:f=>listeners.push(f)}}};});
+for(const name of ['sites.js','chat-only.js','password.js'])await page.addScriptTag({content:fs.readFileSync(root+'/'+name,'utf8')});
+await page.waitForFunction(()=>getComputedStyle(document.getElementById('hide')).display==='none');
+assert(await page.locator('#keep').isVisible());assert(await page.locator('textarea').isVisible());
+const send=msg=>page.evaluate(m=>new Promise(resolve=>{for(const f of listeners)f(m,{id:'test'},resolve)}),msg);
+assert.equal((await send({op:'corporate.status'})).composer,true);
+await send({op:'corporate.mode',enabled:false});assert(await page.locator('#hide').isVisible());
+assert.equal((await send({op:'corporate.settings'})).ok,false);
+assert(await page.locator('#hide').isVisible());
+assert.equal(await page.evaluate(()=>corporateSite('https://gemini.google.com.attacker.invalid/')),undefined);
+await page.evaluate(()=>{for(let i=0;i<100;i++){const p=makeCorporatePassword(24,true);if(p.length!==24||!/[A-Z]/.test(p)||!/[a-z]/.test(p)||!/[2-9]/.test(p)||!/[!@#$%*_=+?\-]/.test(p))throw Error('Password constraints');}for(const n of [0,11,129,12.5]){let rejected=false;try{makeCorporatePassword(n)}catch{rejected=true}if(!rejected)throw Error('Invalid length accepted')}});
+// Dashboard runs as a fixture with only the Chrome API messages mocked.
+await page.route('https://fixture.invalid/**',r=>r.fulfill({contentType:'text/html',body:fs.readFileSync(root+'/dashboard.html','utf8').replace(/<script[^>]*><\/script>/g,'')}));
+await page.goto('https://fixture.invalid/');
+await page.evaluate(()=>{window.updates=[];window.chrome={tabs:{query:async()=>[{id:7,url:'https://example.com/'}],update:async(id,v)=>updates.push({id,...v}),create:async()=>{}},storage:{session:{get:async()=>({})}},runtime:{getURL:p=>'chrome-extension://test/'+p}};window.close=()=>{};});
+for(const name of ['sites.js','password.js','dashboard.js'])await page.addScriptTag({content:fs.readFileSync(root+'/'+name,'utf8')});
+await page.waitForFunction(()=>document.querySelectorAll('#sites button').length===11);
+assert(await page.locator('#launcher').isVisible());
+await page.getByRole('button',{name:'Gemini',exact:true}).click();
+assert.deepEqual(await page.evaluate(()=>updates),[{id:7,url:'https://gemini.google.com/'}]);
+await page.locator('#key').click();await page.locator('#generate').click();assert.equal((await page.locator('#password').inputValue()).length,24);
+console.log('PASS: chat DOM preservation/restore; settings fallback; host boundaries; 100 password samples; invalid lengths; 11 launchers; current-tab navigation; popup generation');
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
