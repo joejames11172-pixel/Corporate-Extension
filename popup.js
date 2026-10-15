@@ -713,7 +713,7 @@
       const keyHex = [...new Uint8Array(key)].map((x) => x.toString(16).padStart(2, "0")).join("");
       const accepted = await chrome.runtime.sendMessage({ op: "pair", session: { base, sid: result.sid, keyHex, expires: Date.now() + 36e5 } });
       if (!accepted?.ok) throw Error("Pairing storage failed");
-      status("Paired. Enable one tab to test reading.");
+      status("Paired. Return to the Gemini tab and click Corporate Extension → On.");
     } catch {
       status("Pairing failed. Verify bridge certificate, address, identity and password.");
       $("password").value = "";
