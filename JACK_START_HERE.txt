@@ -1,8 +1,8 @@
-CORPORATE HELPER — GEMINI CHAT JSON BRIDGE 0.3.0
+CORPORATE HELPER — GEMINI CHAT JSON BRIDGE 0.3.1
 
 Status: implementation and automated core tests complete. Live Supermium/Gemini interaction still requires verification. Alpine HTTPS health reports version 0.2.0; deployed browser endpoint is available. This browser adapter currently supports Gemini only; other listed AI sites retain launcher/chat-only features.
 
-Joe: extract the extension ZIP to a permanent folder. In Supermium open chrome://extensions, enable Developer mode, then Load unpacked (or reload the existing Corporate Extension) and select that folder. Reload the Gemini conversation. Open the extension toolbar popup, choose Pair / disconnect browser bridge, and pair using the existing enrollment and HTTPS endpoint. Return to Jack's Gemini conversation, open the popup, and enable JSON tools in this Gemini chat. This permits read-only tool requests and submitting results back into that chat. Do not enable the old diagnostic extension as well.
+Joe: extract the extension ZIP to a permanent folder. In Supermium open chrome://extensions, enable Developer mode, then Load unpacked (or reload the existing Corporate Extension) and select that folder. Reload the Gemini conversation. Open the extension toolbar popup, choose Pair / disconnect browser bridge, and pair using the existing enrollment and HTTPS endpoint. Return to Jack's Gemini conversation, open the popup, expand Settings, and enable JSON tools in this Gemini chat. This permits read-only tool requests and submitting results back into that chat. Do not enable the old diagnostic extension as well.
 
 Jack: output a single fenced JSON code block containing exactly this envelope. Use a fresh string ID for every new request. Do not repeat a previously used ID with different content.
 
@@ -37,3 +37,5 @@ Changing conversation paths disables access until re-enabled. Pairing expires af
 Transport: authenticated HTTPS POST /browser/mcp, HMAC over path, increasing counter and exact JSON body, using the existing SRP enrollment. The browser adapter relays individual JSON-RPC requests through this bridge; it is not a general-purpose native MCP client. The helper's existing operator /mcp interface remains separate and its operator token is never placed in the extension.
 
 Documentation is maintained in Channels / Corporate Helper. Update it whenever behavior, configuration, deployment or verification changes.
+
+Upgrade from 0.3.0: replace the extracted extension files, reload Corporate Extension in chrome://extensions, then reload the Gemini tab once. This is required to remove the old sidebar observer. Pair again if the session has been cleared.
