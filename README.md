@@ -19,3 +19,5 @@ Validation on 2026-10-15: all JavaScript syntax checks pass; eight combined exte
 Source repositories: Corporate-Extension and Corporate-Helper under the deployment owner's GitHub account. No credentials are included in this package. Deployment details are configured through pairing rather than hardcoded source defaults.
 
 Documentation maintenance: update Channels / Corporate Helper documentation with each implementation or deployment change, including verification and remaining work.
+
+Deployment verification 2026-10-15: Alpine live HTTPS health reports Corporate Helper 0.2.0. All 16 installed helper tests pass, including actual verified HTTPS/SRP/browser JSON integration. Five extension Node tests pass (three helper registry tests are also part of the combined eight-test local run). Native Gemini/Supermium UI remains unverified.
