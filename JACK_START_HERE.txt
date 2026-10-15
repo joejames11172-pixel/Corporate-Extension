@@ -1,6 +1,6 @@
 CORPORATE HELPER — GEMINI CHAT JSON BRIDGE 0.3.0
 
-Status: implementation and automated core tests complete. Live Supermium/Gemini interaction still requires verification. Helper endpoint must report version 0.2.0. This browser adapter currently supports Gemini only; other listed AI sites retain launcher/chat-only features.
+Status: implementation and automated core tests complete. Live Supermium/Gemini interaction still requires verification. Alpine HTTPS health reports version 0.2.0; deployed browser endpoint is available. This browser adapter currently supports Gemini only; other listed AI sites retain launcher/chat-only features.
 
 Joe: extract the extension ZIP to a permanent folder. In Supermium open chrome://extensions, enable Developer mode, then Load unpacked (or reload the existing Corporate Extension) and select that folder. Reload the Gemini conversation. Open the extension toolbar popup, choose Pair / disconnect browser bridge, and pair using the existing enrollment and HTTPS endpoint. Return to Jack's Gemini conversation, open the popup, and enable JSON tools in this Gemini chat. This permits read-only tool requests and submitting results back into that chat. Do not enable the old diagnostic extension as well.
 
