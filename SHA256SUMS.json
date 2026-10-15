@@ -1,0 +1,19 @@
+{
+  "sites.js": "30cb3c98203de31118d5b22fa35cd02ba9fa564b93eef9f7b57dcb69be1b6ae9",
+  "dashboard.css": "18e89174243a2df7e25e19ae0c5206a88e24fbb7b9be21afe7928fe65d2314dc",
+  "password.js": "9f550c918de9936a294794b5cc6fe070768574cba70190aefd1c265080deeaa6",
+  "JACK_START_HERE.txt": "1e5a89e14001cca5cb5bf8f591be6758323b1e61e0bec1622ce42f808d181dbd",
+  "chat-only.js": "f21dd619d68a627b42e65026add9b63924a4c084dae3af76f8fcfd2561f141de",
+  "README.md": "05eedc0345e23e7572ae13654008dbae575dac964abc4c613917138910e774e9",
+  "popup.html": "4653fa7c3e18022f3e666e4963abb3fac5b459438184e2d6d094ae55100ec43f",
+  "background.js": "0444c8137f0c2c881b701c9c010569b6221e23c3e5ffe073f0501bbbf770b2b2",
+  "manifest.json": "ebb1ae191ec59053d28841695b86bb78e1fc2c616b1fb580aba87c4058a84bdb",
+  "dashboard.html": "2a0f0555e1b2224a122fb85a37ee6b9748b536aebd70225e816bd7170ef5e29c",
+  "chat-protocol.js": "3a3894552c7ae7cc6534df11b07ab46f502dfff10ed7287b50ec33ddba237ebf",
+  "chat-bridge.js": "1eb6eac476bc2281daab44301ce2b6a544a746794dfdf58cb015aff69a991418",
+  "dashboard.js": "26a4c5bba7149a9c4c7f99fcafffd87e768f4479440e1acedc89f12e958b6975",
+  "style.css": "37c77c3d73ad22fa72f704a2894b320fe8dea8c45b32b41c96ce01518fa0c349",
+  "popup.js": "1baea205770d68d88fae1f288d44613ee532854270e307aa984f61d4758d5bd0",
+  "tests/core.test.cjs": "e1b963c2faf24a4bbed175d2f17a59e62059ac2c89e7d9499159151da933dcdc",
+  "tests/browser-fixtures.cjs": "9f1457bb1ef95a36b86e36c997c835dc671a3466cbcfd0307142b3d09bff334b"
+}
