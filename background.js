@@ -63,18 +63,28 @@ chrome.tabs.onRemoved.addListener(id=>{serial=serial.then(async()=>{const {tabs=
 // tab and origin; they never receive the HMAC key or an operator credential.
 chrome.runtime.onMessage.addListener((m,s,reply)=>{
  if(s.id!==chrome.runtime.id)return false;
- const popup=s.url===chrome.runtime.getURL('dashboard.html');
+ const popup=['dashboard.html','settings.html'].some(p=>s.url?.split('?')[0]===chrome.runtime.getURL(p));
+ if(m.op==='corporate.connection.status'&&popup){
+  serial=serial.then(async()=>{
+   const tab=await chrome.tabs.get(m.tabId),u=new URL(tab.url),key='corporate-bridge:'+tab.id;
+   const data=await chrome.storage.session.get(['session',key,'corporate-tab:'+tab.id]);
+   const paired=!!(data.session&&data.session.expires>Date.now()),grant=data[key];
+   const enabled=!!(paired&&grant&&grant.origin===u.origin&&grant.path===u.pathname&&data['corporate-tab:'+tab.id]!==false);
+   let reachable=false;if(paired){try{const r=await signed('/browser/mcp',{jsonrpc:'2.0',id:'connection-check',method:'ping'});reachable=!!r.result&&!r.error;}catch{}}
+   reply({ok:true,paired,enabled,reachable});
+  }).catch(()=>reply({ok:false,paired:false,enabled:false,reachable:false}));return true;
+ }
  if(m.op==='corporate.bridge.enable'&&popup){
   serial=serial.then(async()=>{
    if(!Number.isSafeInteger(m.tabId)||typeof m.enabled!=='boolean')throw Error('Invalid tab');
    const tab=await chrome.tabs.get(m.tabId),u=new URL(tab.url);
    if(u.origin!=='https://gemini.google.com')throw Error('Chat JSON adapter currently supports Gemini only');
    const {session,tabs=[]}=await chrome.storage.session.get(['session','tabs']);
-   if(!session||session.expires<=Date.now())throw Error('Pair the browser bridge first');
+   if(m.enabled&&(!session||session.expires<=Date.now()))throw Error('Pair the browser bridge first in Settings');
    const live=tabs.filter(t=>t.id!==tab.id);
    if(m.enabled){if(live.length>=10)throw Error('Too many enabled tabs');live.push({id:tab.id,origin:u.origin});}
    await chrome.storage.session.set({tabs:live,['corporate-bridge:'+tab.id]:m.enabled?{origin:u.origin,path:u.pathname}:null});
-   await signed('/browser/poll',{tabs:live});
+   if(session&&session.expires>Date.now())await signed('/browser/poll',{tabs:live});
    reply({ok:true,enabled:m.enabled});
   }).catch(e=>reply({ok:false,error:e.message}));return true;
  }
