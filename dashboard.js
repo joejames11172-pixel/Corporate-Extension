@@ -4,10 +4,10 @@ const status=t=>{$('status').textContent=t;};
 const message=async m=>{try{return await chrome.tabs.sendMessage(tab.id,m);}catch{return null;}};
 async function init(){
  [tab]=await chrome.tabs.query({active:true,currentWindow:true});const site=corporateSite(tab?.url);
- $('chat').hidden=!site;$('launcher').hidden=!!site;$('site').textContent=site?site.name+' · active tab':'Choose a service';
+ $('advanced').open=!site;$('chat').hidden=!site;$('launcher').hidden=!!site;$('site').textContent=site?site.name+' · active tab':'Choose a service';
  if(site){let r=await message({op:'corporate.status'});
   if(!r){try{await chrome.scripting.executeScript({target:{tabId:tab.id},files:['sites.js','chat-only.js']});r=await message({op:'corporate.status'});}catch{}}
-  if(r){$('mode').checked=r.enabled;status(r.composer?'Native composer detected.':'Waiting for a chat composer; page kept intact.');}
+  if(r){$('mode').checked=r.enabled;status(r.enabled?'On':'Off');}
   else{$('mode').disabled=true;status('Reload this tab once after installing the extension.');}
  }
  for(const s of CorporateSites){const b=document.createElement('button');b.textContent=s.name;b.onclick=async()=>{await chrome.tabs.update(tab.id,{url:s.url});window.close();};$('sites').append(b);}
