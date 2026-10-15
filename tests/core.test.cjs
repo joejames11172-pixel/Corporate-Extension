@@ -22,3 +22,4 @@ test('unrelated chat DOM changes do not repeatedly restore and hide sidebar',asy
  assert.equal(writes,1,'sidebar stays hidden without repeated style writes');assert.equal(restores,0,'external DOM changes must not restore the sidebar');
  listener({op:'corporate.mode',enabled:false},{id:'own'},()=>{});assert.equal(restores,1,'turning off restores the original style once');
 });
+test('main popup has exactly On/Off and Settings buttons',()=>{const html=source('dashboard.html');assert.equal((html.match(/<button\b/g)||[]).length,2);assert.match(html,/id="power"/);assert.match(html,/id="settings"/);assert.doesNotMatch(html,/id="jsonBridge"/);});
